@@ -16,17 +16,4 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    //VictorSPs (Motor Controllers)//
-    public static final int DRIVETRAIN_LF_CONT = 9;
-    public static final int DRIVETRAIN_RF_CONT = 1;
-    public static final int  DRIVETRAIN_LB_CONT = 8;
-    public static final int DRIVETRAIN_RB_CONT = 0;
-
-    //Joystick//
-    //PLACEHOLDER INT(S), REPLACE THIS WHEN YOU GET MORE INFORMATION ABOUT THE CONTROLLER//
-    public static final int DRIVER_GAMEPAD = 0;
-    public static final int DRIVER_GAMEPAD_LSTICK = 0;
-    public static final int DRIVER_GAMEPAD_RSTICK = 1;
-    
-
 }
