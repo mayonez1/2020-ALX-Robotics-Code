@@ -28,6 +28,9 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 import edu.wpi.first.wpilibj.Compressor;
 
+import java.util.concurrent.TimeUnit;
+
+import java.util.*;
 
 /**
 
@@ -38,6 +41,23 @@ import edu.wpi.first.wpilibj.Compressor;
  */
 
 public class Robot extends TimedRobot {
+
+  //Method for starting robot during autonomous//
+  class Start extends TimerTask{
+    public void run(){
+      m_lfMotor.set(-0.2);
+      m_lbMotor.set(-0.2);
+      m_rfMotor.set(0.2);
+      m_rbMotor.set(0.2);
+      try {
+        TimeUnit.SECONDS.sleep(2);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+
+  }
+}
 
   //Declaring Compressor on Port 0//
 
@@ -79,6 +99,7 @@ public class Robot extends TimedRobot {
 
 
 
+
   @Override
 
   public void teleopPeriodic() {
@@ -99,4 +120,16 @@ public class Robot extends TimedRobot {
 
   }
 
-}
+  public void autonomousPeriodic(){
+    //Stuff for timing//
+    Timer autonTimer = new Timer();
+    TimerTask task = new Start();
+    m_lfMotor.set(0);
+    m_lbMotor.set(0);
+    m_rfMotor.set(0);
+    m_rbMotor.set(0);
+    //Schedules function start to run after two seconds, for two seconds//
+    autonTimer.schedule(task, 2000, 2000);
+	}
+  }
+
