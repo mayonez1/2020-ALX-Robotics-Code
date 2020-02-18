@@ -30,6 +30,10 @@ import edu.wpi.first.wpilibj.Compressor;
 
 import java.util.concurrent.TimeUnit;
 
+import edu.wpi.first.wpilibj.Solenoid;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 import java.util.*;
 
 /**
@@ -51,7 +55,7 @@ public class Robot extends TimedRobot {
       m_rbMotor.set(0.2);
       try {
         TimeUnit.SECONDS.sleep(2);
-      } catch (InterruptedException e) {
+      } catch (final InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
     }
@@ -75,13 +79,50 @@ public class Robot extends TimedRobot {
 
   //Declaring motors with motor types and motor ports//
 
-  public final PWMVictorSPX m_lfMotor = new PWMVictorSPX(9);
+  public final PWMVictorSPX m_lfMotor = new PWMVictorSPX(3);
 
   public final PWMVictorSPX m_rfMotor = new PWMVictorSPX(1);
 
-  public final PWMVictorSPX m_lbMotor = new PWMVictorSPX(8);
+  public final PWMVictorSPX m_lbMotor = new PWMVictorSPX(4);
 
-  public final PWMVictorSPX m_rbMotor = new PWMVictorSPX(0);
+  public final PWMVictorSPX m_rbMotor = new PWMVictorSPX(2);
+
+  public final PWMVictorSPX m_fortuneWheel = new PWMVictorSPX(0);
+
+  //Solenoids//
+  
+  //Arm Solenoids//
+
+  public final DoubleSolenoid m_armSolenoid = new DoubleSolenoid(2, 3);
+
+  public final DoubleSolenoid m_forearmSolenoid = new DoubleSolenoid(0, 1);
+
+  //Intake Solenoid//
+
+  public final DoubleSolenoid m_intakeSolenoid = new DoubleSolenoid(6, 7);
+
+
+  //Wheel of Fortune Button//
+
+  public static final int fortuneWheelForward = 7;
+  
+  public static final int fortuneWheelBackwards = 8;
+
+  //Arm Buttons//
+
+  public final int downButton = 10;
+
+  public int down = 100;
+
+  public final int arm = 11;
+
+  public final int forearm = 12;
+
+  //Intake Buttons//
+
+  public final int intakeButton = 2;
+
+  public final long waittime = 1000;
 
   //Setting speed controller groups, sets up the groups as left and right motors//
 
@@ -117,13 +158,52 @@ public class Robot extends TimedRobot {
 
     compressor1.setClosedLoopControl(true);
 
+    //Wheel of Fortune Control//
+
+    if (m_stick.getRawButton(fortuneWheelForward)){
+      m_fortuneWheel.set(0.5);
+    }
+    else if (m_stick.getRawButton(fortuneWheelBackwards)){
+      m_fortuneWheel.set(-0.5);
+    }
+    else {
+      m_fortuneWheel.set(0);
+    }
+
+    //Forearm//
+    if (m_stick.getRawButton(forearm)) {
+      m_forearmSolenoid.set(DoubleSolenoid.Value.kForward);
+    } 
+    else {
+      m_forearmSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+    //Bicep/Arm//
+    if (m_stick.getRawButton(downButton)){
+      down++;
+    }
+    if (down >= 100){
+      m_armSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+    if (m_stick.getRawButton(arm)){
+      m_armSolenoid.set(DoubleSolenoid.Value.kForward);
+      down = 0;
+    }
+    //Intake (WIP)//
+    if (m_stick.getRawButton(intakeButton)){
+      m_intakeSolenoid.set(DoubleSolenoid.Value.kForward);
+
+    }
+
+
+
+
 
   }
 
   public void autonomousPeriodic(){
     //Stuff for timing//
-    Timer autonTimer = new Timer();
-    TimerTask task = new Start();
+    final Timer autonTimer = new Timer();
+    final TimerTask task = new Start();
     m_lfMotor.set(0);
     m_lbMotor.set(0);
     m_rfMotor.set(0);
