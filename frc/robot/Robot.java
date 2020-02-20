@@ -89,6 +89,12 @@ public class Robot extends TimedRobot {
 
   public final PWMVictorSPX m_fortuneWheel = new PWMVictorSPX(0);
 
+  public final PWMVictorSPX m_rThrower = new PWMVictorSPX(6);
+
+  public final PWMVictorSPX m_lThrower = new PWMVictorSPX(7);
+
+  public final PWMVictorSPX m_intakeMotor = new PWMVictorSPX(5);
+
   //Solenoids//
   
   //Arm Solenoids//
@@ -101,6 +107,9 @@ public class Robot extends TimedRobot {
 
   public final DoubleSolenoid m_intakeSolenoid = new DoubleSolenoid(6, 7);
 
+  //Poker Solenoid//
+
+  public final DoubleSolenoid m_pokerSolenoid = new DoubleSolenoid(4, 5);
 
   //Wheel of Fortune Button//
 
@@ -120,9 +129,21 @@ public class Robot extends TimedRobot {
 
   //Intake Buttons//
 
-  public final int intakeButton = 2;
+  public final int intakeButton = 3;
+
+  public final int intakeDown = 5;
+
+  public final int intakeUp = 6;
 
   public final long waittime = 1000;
+
+  //Shooter Button//
+
+  public final int shooterButton = 1;
+
+  //Poker Button//
+
+  public final int pokerButton = 2;
 
   //Setting speed controller groups, sets up the groups as left and right motors//
 
@@ -188,10 +209,34 @@ public class Robot extends TimedRobot {
       m_armSolenoid.set(DoubleSolenoid.Value.kForward);
       down = 0;
     }
+    //Shooter//
+    if (m_stick.getRawButton(shooterButton)){
+      m_rThrower.set(-0.5);
+      m_lThrower.set(0.5);
+    }
+    else {
+      m_rThrower.set(0);
+      m_lThrower.set(0);
+    }
+    //Poker//
+    if (m_stick.getRawButton(pokerButton)){
+      m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+    else {
+      m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
     //Intake (WIP)//
     if (m_stick.getRawButton(intakeButton)){
+      m_intakeMotor.set(-0.6);
+    }
+    else {
+      m_intakeMotor.set(0);
+    }
+    if (m_stick.getRawButton(intakeDown)){
+      m_intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+    if (m_stick.getRawButton(intakeUp)){
       m_intakeSolenoid.set(DoubleSolenoid.Value.kForward);
-
     }
 
 
