@@ -10,11 +10,7 @@
 
 /*----------------------------------------------------------------------------*/
 
-
-
 package frc.robot;
-
-
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -37,39 +33,23 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import java.util.*;
 
 /**
-
+ * 
  * This is a demo program showing the use of the DifferentialDrive class.
-
+ * 
  * Runs the motors with arcade steering.
-
+ * 
  */
 
 public class Robot extends TimedRobot {
 
-  //Method for starting robot during autonomous//
-  class Start extends TimerTask{
-    public void run(){
-      m_lfMotor.set(-0.2);
-      m_lbMotor.set(-0.2);
-      m_rfMotor.set(0.2);
-      m_rbMotor.set(0.2);
-      try {
-        TimeUnit.SECONDS.sleep(2);
-      } catch (final InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
-
-  }
-}
-
-  //Declaring Compressor on Port 0//
+  // Declaring Compressor on Port 0//
 
   public final Compressor compressor1 = new Compressor(0);
 
-  //Declaring variables related to the compressor, these variables tell if the compressor is enabled//
-  //can get the pressure switch value as a boolean//
-  //and can get the compressor current as a double//
+  // Declaring variables related to the compressor, these variables tell if the
+  // compressor is enabled//
+  // can get the pressure switch value as a boolean//
+  // and can get the compressor current as a double//
 
   public final boolean enabled = compressor1.enabled();
 
@@ -77,7 +57,7 @@ public class Robot extends TimedRobot {
 
   public final double current = compressor1.getCompressorCurrent();
 
-  //Declaring motors with motor types and motor ports//
+  // Declaring motors with motor types and motor ports//
 
   public final PWMVictorSPX m_lfMotor = new PWMVictorSPX(3);
 
@@ -95,29 +75,29 @@ public class Robot extends TimedRobot {
 
   public final PWMVictorSPX m_intakeMotor = new PWMVictorSPX(5);
 
-  //Solenoids//
-  
-  //Arm Solenoids//
+  // Solenoids//
+
+  // Arm Solenoids//
 
   public final DoubleSolenoid m_armSolenoid = new DoubleSolenoid(2, 3);
 
   public final DoubleSolenoid m_forearmSolenoid = new DoubleSolenoid(0, 1);
 
-  //Intake Solenoid//
+  // Intake Solenoid//
 
   public final DoubleSolenoid m_intakeSolenoid = new DoubleSolenoid(6, 7);
 
-  //Poker Solenoid//
+  // Poker Solenoid//
 
   public final DoubleSolenoid m_pokerSolenoid = new DoubleSolenoid(4, 5);
 
-  //Wheel of Fortune Button//
+  // Wheel of Fortune Button//
 
   public static final int fortuneWheelForward = 7;
-  
+
   public static final int fortuneWheelBackwards = 8;
 
-  //Arm Buttons//
+  // Arm Buttons//
 
   public final int downButton = 10;
 
@@ -127,7 +107,7 @@ public class Robot extends TimedRobot {
 
   public final int forearm = 12;
 
-  //Intake Buttons//
+  // Intake Buttons//
 
   public final int intakeButton = 3;
 
@@ -137,27 +117,42 @@ public class Robot extends TimedRobot {
 
   public final long waittime = 1000;
 
-  //Shooter Button//
+  public boolean toggle = false;
+
+  // Shooter Button//
 
   public final int shooterButton = 1;
 
-  //Poker Button//
+  // Poker Button//
 
   public final int pokerButton = 2;
 
-  //Setting speed controller groups, sets up the groups as left and right motors//
+  // Setting speed controller groups, sets up the groups as left and right
+  // motors//
 
   SpeedControllerGroup leftMotors = new SpeedControllerGroup(m_lfMotor, m_lbMotor);
 
   SpeedControllerGroup rightMotors = new SpeedControllerGroup(m_rfMotor, m_rbMotor);
 
-  //Making Differential drive//
+  // Making Differential drive//
 
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftMotors, rightMotors);
 
-  //Declaring Joystick//
+  // Declaring Joystick//
 
   private final Joystick m_stick = new Joystick(0);
+
+  // Method for starting robot during autonomous//
+  class Start extends TimerTask {
+    public void run() {
+      m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+  }
+  class Stop extends TimerTask {
+    public void run() {
+      m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+  }
 
 
 
@@ -211,8 +206,8 @@ public class Robot extends TimedRobot {
     }
     //Shooter//
     if (m_stick.getRawButton(shooterButton)){
-      m_rThrower.set(-0.5);
-      m_lThrower.set(0.5);
+      m_rThrower.set(-0.8);
+      m_lThrower.set(0.8);
     }
     else {
       m_rThrower.set(0);
@@ -227,16 +222,12 @@ public class Robot extends TimedRobot {
     }
     //Intake (WIP)//
     if (m_stick.getRawButton(intakeButton)){
-      m_intakeMotor.set(-0.6);
+      m_intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+      m_intakeMotor.set(-1.0);
     }
     else {
-      m_intakeMotor.set(0);
-    }
-    if (m_stick.getRawButton(intakeDown)){
-      m_intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
-    }
-    if (m_stick.getRawButton(intakeUp)){
       m_intakeSolenoid.set(DoubleSolenoid.Value.kForward);
+      m_intakeMotor.set(0);
     }
 
 
@@ -246,15 +237,14 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousPeriodic(){
-    //Stuff for timing//
     final Timer autonTimer = new Timer();
     final TimerTask task = new Start();
-    m_lfMotor.set(0);
-    m_lbMotor.set(0);
-    m_rfMotor.set(0);
-    m_rbMotor.set(0);
-    //Schedules function start to run after two seconds, for two seconds//
-    autonTimer.schedule(task, 2000, 2000);
+    m_rThrower.set(-0.8);
+    m_lThrower.set(0.8);
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+    autonTimer.schedule(task, 1000, 100);
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+
 	}
   }
 
