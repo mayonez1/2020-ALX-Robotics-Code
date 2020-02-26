@@ -24,9 +24,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 import edu.wpi.first.wpilibj.Compressor;
 
-import java.util.concurrent.TimeUnit;
-
-import edu.wpi.first.wpilibj.Solenoid;
+import java.lang.*;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
@@ -148,9 +146,29 @@ public class Robot extends TimedRobot {
       m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
   }
-  class Stop extends TimerTask {
+
+  public class autonSleep implements Runnable {
+    Thread t;
+
     public void run() {
       m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+      m_rThrower.set(-0.8);
+      m_lThrower.set(0.8);
+      m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+      try {
+        Thread.sleep(100);
+      }
+      catch (Exception e){
+        System.out.println(e);
+      }
+      m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+      try {
+        Thread.sleep(1000);
+      }
+      catch (Exception e){
+        System.out.println(e);
+      }
+
     }
   }
 
@@ -235,15 +253,96 @@ public class Robot extends TimedRobot {
 
 
   }
-
+  public Thread t = new Thread(new autonSleep());
   public void autonomousPeriodic(){
-    final Timer autonTimer = new Timer();
-    final TimerTask task = new Start();
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
     m_rThrower.set(-0.8);
     m_lThrower.set(0.8);
+    try {
+      Thread.sleep(1000);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+    try {
+      Thread.sleep(100);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
     m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
-    autonTimer.schedule(task, 1000, 100);
+    try {
+      Thread.sleep(1000);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+    try {
+      Thread.sleep(100);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
     m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+    try {
+      Thread.sleep(1000);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+    try {
+      Thread.sleep(100);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+    try {
+      Thread.sleep(1000);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+    try {
+      Thread.sleep(100);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+    try {
+      Thread.sleep(1000);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
+    try {
+      Thread.sleep(100);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
+    try {
+      Thread.sleep(1000);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_rThrower.set(0);
+    m_lThrower.set(0);
+    try {
+      Thread.sleep(15000);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    return;
 
 	}
   }
