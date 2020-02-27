@@ -30,6 +30,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import java.util.*;
 
+import edu.wpi.first.wpilibj.GenericHID;
+
+import edu.wpi.first.wpilibj.XboxController;
+
 /**
  * 
  * This is a demo program showing the use of the DifferentialDrive class.
@@ -55,6 +59,12 @@ public class Robot extends TimedRobot {
 
   public final double current = compressor1.getCompressorCurrent();
 
+  // Declaring Joystick//
+
+  private final XboxController m_stick = new XboxController(0);
+
+  public final boolean curvBool = true;
+
   // Declaring motors with motor types and motor ports//
 
   public final PWMVictorSPX m_lfMotor = new PWMVictorSPX(3);
@@ -72,6 +82,8 @@ public class Robot extends TimedRobot {
   public final PWMVictorSPX m_lThrower = new PWMVictorSPX(7);
 
   public final PWMVictorSPX m_intakeMotor = new PWMVictorSPX(5);
+
+  public final PWMVictorSPX m_light = new PWMVictorSPX(8);
 
   // Solenoids//
 
@@ -91,9 +103,9 @@ public class Robot extends TimedRobot {
 
   // Wheel of Fortune Button//
 
-  public static final int fortuneWheelForward = 7;
+  public static final int fortuneWheelForward = 8;
 
-  public static final int fortuneWheelBackwards = 8;
+  public static final int fortuneWheelBackwards = 7;
 
   // Arm Buttons//
 
@@ -101,29 +113,21 @@ public class Robot extends TimedRobot {
 
   public int down = 100;
 
-  public final int arm = 11;
+  public final int arm = 1;
 
-  public final int forearm = 12;
+  public final int forearm = 4;
 
   // Intake Buttons//
 
-  public final int intakeButton = 3;
-
-  public final int intakeDown = 5;
-
-  public final int intakeUp = 6;
-
-  public final long waittime = 1000;
-
-  public boolean toggle = false;
+  public final int intakeButton = 6;
 
   // Shooter Button//
 
-  public final int shooterButton = 1;
+  public final double shooterButton = m_stick.getTriggerAxis(GenericHID.Hand.kLeft);
 
   // Poker Button//
 
-  public final int pokerButton = 2;
+  public final double pokerButton = m_stick.getTriggerAxis(GenericHID.Hand.kRight);
 
   // Setting speed controller groups, sets up the groups as left and right
   // motors//
@@ -136,39 +140,10 @@ public class Robot extends TimedRobot {
 
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftMotors, rightMotors);
 
-  // Declaring Joystick//
-
-  private final Joystick m_stick = new Joystick(0);
-
   // Method for starting robot during autonomous//
   class Start extends TimerTask {
     public void run() {
       m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
-    }
-  }
-
-  public class autonSleep implements Runnable {
-    Thread t;
-
-    public void run() {
-      m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
-      m_rThrower.set(-0.8);
-      m_lThrower.set(0.8);
-      m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
-      try {
-        Thread.sleep(100);
-      }
-      catch (Exception e){
-        System.out.println(e);
-      }
-      m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
-      try {
-        Thread.sleep(1000);
-      }
-      catch (Exception e){
-        System.out.println(e);
-      }
-
     }
   }
 
@@ -185,7 +160,7 @@ public class Robot extends TimedRobot {
 
     // and backward, and the X turns left and right.
 
-    m_robotDrive.arcadeDrive(m_stick.getY(), m_stick.getX());
+    m_robotDrive.curvatureDrive((m_stick.getY(GenericHID.Hand.kLeft)*.8), (m_stick.getX(GenericHID.Hand.kRight)*.8), curvBool);
 
     //Compressor/Pneumatic Control and Stuff//
     //This turns on the air compressor, it is automatically programmed (by the library) to stop at 120psi and re-enable at 80psi//
@@ -223,16 +198,18 @@ public class Robot extends TimedRobot {
       down = 0;
     }
     //Shooter//
-    if (m_stick.getRawButton(shooterButton)){
-      m_rThrower.set(-0.8);
-      m_lThrower.set(0.8);
+    if (m_stick.getTriggerAxis(GenericHID.Hand.kLeft) >= 0.7){
+      m_rThrower.set(-0.55);
+      m_lThrower.set(0.55);
+      m_light.set(1.0);
     }
     else {
       m_rThrower.set(0);
       m_lThrower.set(0);
+      m_light.set(0);
     }
     //Poker//
-    if (m_stick.getRawButton(pokerButton)){
+    if (m_stick.getTriggerAxis(GenericHID.Hand.kRight) >= 0.7){
       m_pokerSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
     else {
@@ -253,7 +230,6 @@ public class Robot extends TimedRobot {
 
 
   }
-  public Thread t = new Thread(new autonSleep());
   public void autonomousPeriodic(){
     m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
     m_rThrower.set(-0.8);
