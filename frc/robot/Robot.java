@@ -230,7 +230,7 @@ public class Robot extends TimedRobot {
 
 
   }
-  public void autonomousPeriodic(){
+  public void autonomousInit(){
     m_pokerSolenoid.set(DoubleSolenoid.Value.kForward);
     m_rThrower.set(-0.8);
     m_lThrower.set(0.8);
@@ -312,12 +312,30 @@ public class Robot extends TimedRobot {
     }
     m_rThrower.set(0);
     m_lThrower.set(0);
+    m_lfMotor.set(-0.7);
+    m_lbMotor.set(-0.7);
+    m_rfMotor.set(0.7);
+    m_rbMotor.set(0.7);
     try {
-      Thread.sleep(15000);
+      Thread.sleep(500);
     }
     catch (Exception e){
       System.out.println(e);
     }
+    m_lfMotor.set(-0.71);
+    m_lbMotor.set(-0.71);
+    m_rfMotor.set(0.71);
+    m_rbMotor.set(0.71);
+    try {
+      Thread.sleep(500);
+    }
+    catch (Exception e){
+      System.out.println(e);
+    }
+    m_lfMotor.set(0);
+    m_lbMotor.set(0);
+    m_rfMotor.set(0);
+    m_rbMotor.set(0);
     return;
 
 	}
